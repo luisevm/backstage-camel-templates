@@ -1,0 +1,9 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: camel-starters
+  description: A collection of RHDH templates for Camel
+spec:
+  type: url
+  targets:
+     - ./scaffolder-templates/camel-timer-template/template.yaml  
