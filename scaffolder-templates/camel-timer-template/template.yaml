@@ -45,6 +45,30 @@ spec:
           type: string
           description: Help others understand what this website is for.
           default: A cool quarkus app
+
+    - title: Git Repository Information
+      required:
+        - repo
+      properties:
+        repo:
+          title: Git Repo Location
+          type: object
+          properties:
+            host:
+              title: Repo Host
+              type: string
+              description: Your SCM host
+              default: github.com
+              enum:
+                - github.com
+            owner:
+              title: Repo Org
+              type: string
+              description: Your SCM host organization/group
+              default: GcBackstageDemos
+              enum:
+                - GcBackstageDemos
+  
   steps:
     - id: template
       name: Fetch Skeleton + Template
