@@ -2,7 +2,7 @@ apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: camel-timer-template
-  title: Simple example on how to develop with Camel
+  title: Camel Quarkus - AMQP/S3
   description: Create a simple Hello World Camel Project
   tags:
     - recommended
@@ -45,83 +45,6 @@ spec:
           type: string
           description: Help others understand what this website is for.
           default: A cool quarkus app
-    - title: Provide Image Registry Information
-      required:
-        - image_registry
-      properties:
-        image_registry:
-          title: Image Registry
-          type: string
-          enum:
-            - Openshift
-            - Quay
-      dependencies:
-        image_registry:
-          oneOf:
-            - properties:
-                image_registry:
-                  enum:
-                    - Openshift
-                image_host:
-                  title: Image Host
-                  type: string
-                  description: Host for storing image
-                  default: image-registry.openshift-image-registry.svc:5000
-                image_tag:
-                  title: Image Tag
-                  default: latest
-                  type: string
-                  description: Build Image tag
-            - properties:
-                image_registry:
-                  enum:
-                    - Quay
-                image_host:
-                  title: Image Host
-                  type: string
-                  description: Host for storing image
-                  default: {{ quay_host }}
-                image_organization:
-                  title: Organization
-                  type: string
-                  description: Name of the Quay Organization
-                  default: quayadmin
-                image_tag:
-                  title: Image Tag
-                  default: latest
-                  type: string
-                  description: Build Image tag
-    - title: Application repository Information
-      required:
-        - repo
-      properties:
-        repo:
-          title: Repository Location
-          type: object
-          properties:
-            host:
-              title: Repo Host
-              type: string
-              description: Your SCM host
-              default: {{ gitlab_host }}
-              enum:
-                - {{ gitlab_host }}
-            owner:
-              title: Repo Owner
-              type: string
-              description: Your SCM host organization/group
-              default: {{ gitlab_destination_group }}
-              enum:
-                - {{ gitlab_destination_group }}
-            verify_commits:
-              title: Verify Commits
-              type: string
-              description: Verify Git repository commits using Red Hat’s Trusted Artifact Signer (TAS) service
-              default: disabled
-              enum:
-                - enabled
-                - disabled
-
   steps:
     - id: template
       name: Fetch Skeleton + Template

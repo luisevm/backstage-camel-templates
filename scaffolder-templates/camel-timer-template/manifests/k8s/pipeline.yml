@@ -1,12 +1,13 @@
 apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
-  name: broker-to-s3
+  name: ${{values.artifact_id}}-build
   annotations:
     meta.helm.sh/release-name: quarkus-pipeline
     meta.helm.sh/release-namespace: camel-dev
   labels:
-    system: default-application
+    type: pipeline
+    backstage.io/kubernetes-id: ${{values.artifact_id}}
 spec:
   params:
     - default: 'https://github.com/GuilhermeCamposo/camel_development_starter'
@@ -21,7 +22,7 @@ spec:
       description: path to Dockerfile
       name: dockerfilePath
       type: string
-    - default: 'image-registry.openshift-image-registry.svc:5000/camel-dev/broker-to-s3'
+    - default: 'image-registry.openshift-image-registry.svc:5000/camel-dev/${{values.artifact_id}}'
       description: container image
       name: image
       type: string
