@@ -68,19 +68,32 @@ spec:
               default: GcBackstageDemos
               enum:
                 - GcBackstageDemos
-  
+
+    - title: K8s Information
+      required:
+        - namespace
+        - argo_project
+      properties:
+        namespace:
+          title: Namespace
+          type: string
+          description: Namespace where it will be deployed
+          ui:field: EntityNamePicker
+          maxLength: 23
+        argo_project:
+          title: ArgoCD Project
+          type: string
+          default: redhat.janus
+          description: ArgoCD Project that should host the Application
   steps:
     - id: template
       name: Fetch Skeleton + Template
       action: fetch:template
       input:
         url: ./skeleton
-        copyWithoutTemplating:
-          - .github/workflows/*
         values:
           component_id: ${{ parameters.component_id }}
           description: ${{ parameters.description }}
-          namespace: ${{ parameters.component_id }}-dev
           group_id: ${{ parameters.group_id }}
           artifact_id: ${{ parameters.artifact_id }}
           java_package_name: ${{ parameters.java_package_name }}
@@ -115,16 +128,9 @@ spec:
           source_repository: "https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{parameters.component_id}}.git"
           repository_name: ${{parameters.component_id}}
           git_owner: ${{ parameters.repo.owner }}
-          namespace: ${{ parameters.component_id }}-dev
-          image_registry: ${{ parameters.image_registry }}
-          image_host: ${{ parameters.image_host }}
-          image_organization: ${{ parameters.image_organization }}
-          image_name: ${{ parameters.component_id }}
-          image_tag:  ${{ parameters.image_tag }}
-          repository_host: ${{ parameters.repo.host }}
-          deployment_name: quarkus-template
+          namespace: ${{ parameters.namespace }}
           user: ${{ user.entity.metadata.name }}
-          verify_commits: ${{ parameters.repo.verify_commits }}
+          argo_project: ${{ parameters.argo_project }}
         targetPath: ./tenant-gitops
 
     - id: publish-gitops
@@ -143,7 +149,7 @@ spec:
       input:
         appName: ${{ parameters.component_id }}-bootstrap
         argoInstance: main
-        namespace: janus-argocd
+        namespace: ${{ parameters.namespace }}
         repoUrl: "https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.component_id }}-gitops.git"
         path: 'argocd/'
 

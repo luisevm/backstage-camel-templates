@@ -62,7 +62,7 @@ spec:
             successThreshold: 1
             failureThreshold: 3
           terminationMessagePolicy: File
-          image: image-registry.openshift-image-registry.svc:5000/camel-dev/${{values.artifact_id}}:latest
+          image: image-registry.openshift-image-registry.svc:5000/${{values.namespace}}/${{values.artifact_id}}:latest
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       dnsPolicy: ClusterFirst

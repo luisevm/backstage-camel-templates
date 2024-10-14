@@ -2,20 +2,20 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: ${{ values.component_id }}-dev-build
+  name: ${{ values.component_id }}-build
   finalizers:
     - resources-finalizer.argocd.argoproj.io
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
 spec:
-  project: camel-examples
+  project: ${{ values.namespace }}
   source:
-    repoURL: ${{ values.destination }}
+    repoURL: ${{ values.argo_project }}
     targetRevision: HEAD
     path: ./k8s
   destination:
     server: https://kubernetes.default.svc
-    namespace: ${{ values.component_id }}-dev
+    namespace: ${{ values.namespace }}
   ignoreDifferences:
     - group: '*'
       jqPathExpressions:
