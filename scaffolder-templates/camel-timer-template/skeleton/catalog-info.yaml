@@ -14,7 +14,7 @@ metadata:
       icon: web
   annotations:
     backstage.io/kubernetes-id: ${{values.component_id | dump}}
-    janus-idp.io/tekton : ${{values.service_id | dump}}
+    janus-idp.io/tekton : ${{values.component_id | dump}}
 spec:
   type: service
   lifecycle: experimental
