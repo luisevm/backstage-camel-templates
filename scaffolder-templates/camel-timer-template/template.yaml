@@ -91,61 +91,63 @@ spec:
           default: default
           description: ArgoCD Instance Configure on Backstage Installation
   steps:
-    # - id: template
-    #   name: Fetch Skeleton + Template
-    #   action: fetch:template
-    #   input:
-    #     url: ./skeleton
-    #     values:
-    #       component_id: ${{ parameters.component_id }}
-    #       description: ${{ parameters.description }}
-    #       group_id: ${{ parameters.group_id }}
-    #       artifact_id: ${{ parameters.artifact_id }}
-    #       java_package_name: ${{ parameters.java_package_name }}
-    #       owner: ${{ user.entity.metadata.name }}
-    #       host:  ${{ parameters.repo.host }}
-    #       destination: ${{ parameters.repo.owner }}/${{ parameters.component_id }}
+    - id: template
+      name: Fetch Skeleton + Template
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          component_id: ${{ parameters.component_id }}
+          description: ${{ parameters.description }}
+          group_id: ${{ parameters.group_id }}
+          artifact_id: ${{ parameters.artifact_id }}
+          java_package_name: ${{ parameters.java_package_name }}
+          owner: ${{ user.entity.metadata.name }}
+          host:  ${{ parameters.repo.host }}
+          destination: ${{ parameters.repo.owner }}/${{ parameters.component_id }}
 
-    # - id: publish
-    #   name: Publish
-    #   action: publish:github
-    #   input:
-    #     repoUrl: "${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.component_id}}"
-    #     repoVisibility: public
+    - id: publish
+      name: Publish
+      action: publish:github
+      input:
+        repoUrl: "${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.component_id}}"
+        repoVisibility: public
 
-    # - id: register
-    #   name: Register
-    #   action: catalog:register
-    #   input:
-    #     repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
-    #     catalogInfoPath: "/catalog-info.yaml"
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: "/catalog-info.yaml"
 
-    # - id: template-gitops-deployment
-    #   name: Generating Deployment Resources
-    #   action: fetch:template
-    #   input:
-    #     url: ./manifests
-    #     copyWithoutTemplating: []
-    #     values:
-    #       component_id: ${{ parameters.component_id }}
-    #       description: ${{ parameters.description }}
-    #       destination: "https://'${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{parameters.component_id}}-gitops.git"
-    #       source_repository: "https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{parameters.component_id}}.git"
-    #       namespace: ${{ parameters.namespace }}
-    #       user: ${{ user.entity.metadata.name }}
-    #       argo_project: ${{ parameters.argo_project }}
-    #       artifact_id: ${{ parameters.artifact_id }}
-    #     targetPath: ./tenant-gitops
+    - id: template-gitops-deployment
+      name: Generating Deployment Resources
+      action: fetch:template
+      input:
+        url: ./manifests
+        copyWithoutTemplating: []
+        values:
+          component_id: ${{ parameters.component_id }}
+          description: ${{ parameters.description }}
+          destination: "https://'${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{parameters.component_id}}-gitops.git"
+          source_repository: "https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{parameters.component_id}}.git"
+          namespace: ${{ parameters.namespace }}
+          user: ${{ user.entity.metadata.name }}
+          argo_project: ${{ parameters.argo_project }}
+          artifact_id: ${{ parameters.artifact_id }}
+          gitops_repo: ${{ steps.publish.output.remoteUrl }}-gitops
+          source_repo: ${{ steps.publish.output.remoteUrl }}
+        targetPath: ./tenant-gitops
 
-    # - id: publish-gitops
-    #   name: Publishing to Resource Repository
-    #   action: publish:github
-    #   input:
-    #     repoUrl: "${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.component_id}}-gitops"
-    #     title: gitops resources for '${{ parameters.component_id }}'
-    #     description: gitops resources for '${{ parameters.component_id }}' 
-    #     sourcePath: ./tenant-gitops
-    #     repoVisibility: public
+    - id: publish-gitops
+      name: Publishing to Resource Repository
+      action: publish:github
+      input:
+        repoUrl: "${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.component_id}}-gitops"
+        title: gitops resources for '${{ parameters.component_id }}'
+        description: gitops resources for '${{ parameters.component_id }}' 
+        sourcePath: ./tenant-gitops
+        repoVisibility: public
 
     - id: create-argocd-resources
       name: Create ArgoCD Resources

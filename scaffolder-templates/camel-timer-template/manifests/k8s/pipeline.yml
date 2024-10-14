@@ -2,15 +2,12 @@ apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
   name: ${{values.artifact_id}}-build
-  annotations:
-    meta.helm.sh/release-name: quarkus-pipeline
-    meta.helm.sh/release-namespace: camel-dev
   labels:
     type: pipeline
     backstage.io/kubernetes-id: ${{values.artifact_id}}
 spec:
   params:
-    - default: 'https://github.com/GuilhermeCamposo/camel_development_starter'
+    - default: '${{values.source_repo}}'
       description: component source Git pepository
       name: git-url
       type: string
@@ -18,11 +15,11 @@ spec:
       description: component source Git revision
       name: git-revision
       type: string
-    - default: camel-examples/broker-to-s3/src/main/docker/Dockerfile.jvm
+    - default: src/main/docker/Dockerfile.jvm
       description: path to Dockerfile
       name: dockerfilePath
       type: string
-    - default: 'image-registry.openshift-image-registry.svc:5000/camel-dev/${{values.artifact_id}}'
+    - default: 'image-registry.openshift-image-registry.svc:5000/${{ values.namespace }}/${{values.artifact_id}}'
       description: container image
       name: image
       type: string
@@ -30,7 +27,7 @@ spec:
       description: image tag
       name: version
       type: string
-    - default: camel-examples/broker-to-s3
+    - default: "."
       description: path to the directory where to package and build image
       name: context-dir  
   tasks:

@@ -8,9 +8,9 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
 spec:
-  project: ${{ values.namespace }}
+  project: ${{ values.argo_project }}
   source:
-    repoURL: ${{ values.argo_project }}
+    repoURL: ${{ values.gitops_repo }}
     targetRevision: HEAD
     path: ./k8s
   destination:
