@@ -112,6 +112,7 @@ spec:
       input:
         repoUrl: "${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.component_id}}"
         repoVisibility: public
+        defaultBranch: main
 
     - id: register
       name: Register
@@ -148,6 +149,7 @@ spec:
         description: gitops resources for '${{ parameters.component_id }}' 
         sourcePath: ./tenant-gitops
         repoVisibility: public
+        defaultBranch: main
 
     - id: create-argocd-resources
       name: Create ArgoCD Resources
