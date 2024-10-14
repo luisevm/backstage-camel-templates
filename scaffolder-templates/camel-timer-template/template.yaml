@@ -83,8 +83,13 @@ spec:
         argo_project:
           title: ArgoCD Project
           type: string
-          default: redhat.janus
+          default: default
           description: ArgoCD Project that should host the Application
+        argo_instance:
+          title: ArgoCD Instance
+          type: string
+          default: openshift-gitops
+          description: ArgoCD Instance Name
   steps:
     - id: template
       name: Fetch Skeleton + Template
@@ -126,11 +131,10 @@ spec:
           description: ${{ parameters.description }}
           destination: "https://'${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{parameters.component_id}}-gitops.git"
           source_repository: "https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{parameters.component_id}}.git"
-          repository_name: ${{parameters.component_id}}
-          git_owner: ${{ parameters.repo.owner }}
           namespace: ${{ parameters.namespace }}
           user: ${{ user.entity.metadata.name }}
           argo_project: ${{ parameters.argo_project }}
+          artifact_id: ${{ parameters.artifact_id }}
         targetPath: ./tenant-gitops
 
     - id: publish-gitops
@@ -148,7 +152,7 @@ spec:
       action: argocd:create-resources
       input:
         appName: ${{ parameters.component_id }}-bootstrap
-        argoInstance: main
+        argoInstance: ${{ parameters.argo_instance }}
         namespace: ${{ parameters.namespace }}
         repoUrl: "https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.component_id }}-gitops.git"
         path: 'argocd/'
