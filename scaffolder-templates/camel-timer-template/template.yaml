@@ -72,7 +72,7 @@ spec:
     - title: K8s Information
       required:
         - namespace
-        - argo_project
+        - argo_instance
       properties:
         namespace:
           title: Namespace
@@ -80,11 +80,6 @@ spec:
           description: Namespace where it will be deployed
           ui:field: EntityNamePicker
           maxLength: 23
-        argo_project:
-          title: ArgoCD Project
-          type: string
-          default: default
-          description: ArgoCD Project that should host the Application
         argo_instance:
           title: ArgoCD Instance
           type: string
@@ -134,7 +129,6 @@ spec:
           source_repository: "https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{parameters.component_id}}.git"
           namespace: ${{ parameters.namespace }}
           user: ${{ user.entity.metadata.name }}
-          argo_project: ${{ parameters.argo_project }}
           artifact_id: ${{ parameters.artifact_id }}
           gitops_repo: ${{ steps.publish.output.remoteUrl }}-gitops
           source_repo: ${{ steps.publish.output.remoteUrl }}
@@ -155,7 +149,7 @@ spec:
       name: Create ArgoCD Resources
       action: argocd:create-resources
       input:
-        appName: ${{ parameters.component_id }}-bootstrap
+        appName: ${{ parameters.component_id }}
         argoInstance: ${{ parameters.argo_instance }}
         namespace: ${{ parameters.namespace }}
         repoUrl: "https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.component_id }}-gitops.git"

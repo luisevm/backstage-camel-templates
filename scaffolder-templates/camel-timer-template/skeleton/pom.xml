@@ -66,8 +66,7 @@ xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLS
 </dependencyManagement>
 
 <dependencies>
-    <!-- basic set of dependencies for any use case-->
-    
+    <!-- basic set of dependencies for any use case-->    
     <!-- quarkus dependencies -->
     <dependency>
         <groupId>io.quarkus</groupId>
@@ -193,7 +192,5 @@ xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLS
         </plugin>
     </plugins>
 </build>
-
-
 
 </project>

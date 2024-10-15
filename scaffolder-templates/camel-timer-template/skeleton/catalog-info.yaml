@@ -9,13 +9,16 @@ metadata:
     - url: https://devspaces.apps.cluster-example.com/?storageType=per-workspace#${{values.destination}}
       title: OpenShift Dev Spaces
       icon: web
-    - url: https://hawtio-online.apps.cluster-example.com/online/discover?namespace=${{values.namespace}}
+    - url: https://hawtio-online.${{values.cluster-app-domain}}/
       title: HawtIO
       icon: web
   annotations:
     backstage.io/kubernetes-id: ${{values.component_id | dump}}
-    janus-idp.io/tekton : ${{values.component_id | dump}}
+    janus-idp.io/tekton : ${{values.component_id | dump}}    
+    backstage.io/source-location: url:${{values.source_repo}}
+    backstage.io/techdocs-ref: url:${{values.source_repo}}
+    argocd/app-selector: backstage-name=${{values.cluster-app-domain}}
 spec:
   type: service
   lifecycle: experimental
-  owner: ${{values.owner | dump}}
+  owner: 'user:${{values.owner | dump}}'

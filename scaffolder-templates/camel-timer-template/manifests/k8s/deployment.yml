@@ -6,12 +6,10 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      type: pipeline
       backstage.io/kubernetes-id: ${{values.artifact_id}}
   template:
     metadata:
       labels:
-        type: pipeline
         backstage.io/kubernetes-id: ${{values.artifact_id}}
     spec:
       containers:
