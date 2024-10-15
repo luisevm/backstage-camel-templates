@@ -3,7 +3,7 @@ kind: Template
 metadata:
   name: camel-timer-template
   title: Camel Quarkus - AMQP/S3
-  description: Create a simple Hello World Camel Project
+  description: Monitor AMQ queues and send CVS file to S3
   tags:
     - recommended
     - java
@@ -89,7 +89,7 @@ spec:
           title: ArgoCD Instance
           type: string
           default: default
-          description: ArgoCD Instance Configure on Backstage Installation
+          description: ArgoCD Instance set on the Backstage Configuration
   steps:
     - id: template
       name: Fetch Skeleton + Template
@@ -159,7 +159,7 @@ spec:
         argoInstance: ${{ parameters.argo_instance }}
         namespace: ${{ parameters.namespace }}
         repoUrl: "https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.component_id }}-gitops.git"
-        path: 'argocd/'
+        path: 'k8s/'
 
   output:
     links:
