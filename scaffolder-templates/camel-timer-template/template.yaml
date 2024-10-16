@@ -106,6 +106,7 @@ spec:
           host:  ${{ parameters.repo.host }}
           destination: ${{ parameters.repo.owner }}/${{ parameters.component_id }}
           cluster_app_domain: ${{ parameters.cluster_app_domain }}
+          source_repo: "${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.component_id }}"
 
     - id: publish
       name: Publish
