@@ -73,11 +73,11 @@ spec:
       required:
         - namespace
         - argo_instance
+        - cluster_app_domain
       properties:
         cluster_app_domain:
           title: Your Cluster App Domain
           type: string
-          default: default
           description: something like 'apps.org-domain'
         namespace:
           title: Namespace

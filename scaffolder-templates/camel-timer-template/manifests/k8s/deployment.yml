@@ -13,6 +13,7 @@ spec:
     metadata:
       labels:
         backstage.io/kubernetes-id: ${{values.artifact_id}}
+        app.kubernetes.io/instance: ${{values.component_id}}
     spec:
       containers:
         - resources: {}
