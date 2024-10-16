@@ -113,7 +113,7 @@ spec:
       action: publish:github
       input:
         repoUrl: "${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.component_id}}"
-        repoVisibility: private
+        repoVisibility: public
         defaultBranch: main
 
     - id: register
@@ -149,7 +149,7 @@ spec:
         title: gitops resources for '${{ parameters.component_id }}'
         description: gitops resources for '${{ parameters.component_id }}' 
         sourcePath: ./tenant-gitops
-        repoVisibility: private
+        repoVisibility: public
         defaultBranch: main
 
     - id: create-argocd-resources
