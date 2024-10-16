@@ -74,6 +74,11 @@ spec:
         - namespace
         - argo_instance
       properties:
+        cluster_app_domain:
+          title: Your Cluster App Domain
+          type: string
+          default: default
+          description: something like 'apps.org-domain'
         namespace:
           title: Namespace
           type: string
@@ -100,13 +105,14 @@ spec:
           owner: ${{ user.entity.metadata.name }}
           host:  ${{ parameters.repo.host }}
           destination: ${{ parameters.repo.owner }}/${{ parameters.component_id }}
+          cluster_app_domain: ${{ parameters.cluster_app_domain }}
 
     - id: publish
       name: Publish
       action: publish:github
       input:
         repoUrl: "${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.component_id}}"
-        repoVisibility: public
+        repoVisibility: private
         defaultBranch: main
 
     - id: register
@@ -142,7 +148,7 @@ spec:
         title: gitops resources for '${{ parameters.component_id }}'
         description: gitops resources for '${{ parameters.component_id }}' 
         sourcePath: ./tenant-gitops
-        repoVisibility: public
+        repoVisibility: private
         defaultBranch: main
 
     - id: create-argocd-resources
