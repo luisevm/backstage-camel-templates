@@ -1,0 +1,12 @@
+- route:
+    id: timer-route
+    from:
+      id: from-3416
+      description: get messages
+      uri: timer:hello
+      parameters:
+        repeatCount: "10"
+      steps:
+        - log:
+            id: log-2135
+            message: Hello World

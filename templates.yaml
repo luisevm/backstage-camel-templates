@@ -6,4 +6,5 @@ metadata:
 spec:
   type: url
   targets:
-     - ./scaffolder-templates/camel-timer-template/template.yaml  
+     - ./scaffolder-templates/camel-timer-amq-s3/template.yaml
+     - ./scaffolder-templates/camel-timer-log/template.yaml    

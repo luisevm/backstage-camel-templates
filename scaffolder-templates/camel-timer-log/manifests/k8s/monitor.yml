@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: ${{values.artifact_id}}
+spec:
+  podMetricsEndpoints:
+    - bearerTokenSecret:
+        key: ''
+      path: /q/metrics
+      port: http
+  selector:
+    matchLabels:
+      backstage.io/kubernetes-id: ${{values.artifact_id}}
+      app.kubernetes.io/instance: ${{values.component_id}}    

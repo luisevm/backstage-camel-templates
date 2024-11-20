@@ -1,9 +1,9 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: camel-timer-template
-  title: Camel Quarkus - AMQP/S3
-  description: Monitor AMQ queues and send CVS file to S3
+  name: camel-timer-log
+  title: Camel Quarkus - Timer/Log
+  description: Trigger hello world logs
   tags:
     - recommended
     - java

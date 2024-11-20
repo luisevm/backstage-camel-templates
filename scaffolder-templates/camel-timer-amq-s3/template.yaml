@@ -1,0 +1,171 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: camel-timer-amq-s3
+  title: Camel Quarkus - AMQP/S3
+  description: Monitor AMQ queues and send CVS file to S3
+  tags:
+    - recommended
+    - java
+    - quarkus
+    - maven
+spec:
+  owner: camel-examples
+  type: service
+  parameters:
+    - title: Provide Information for Application
+      required:
+        - component_id
+        - java_package_name
+      properties:
+        component_id:
+          title: Name
+          type: string
+          description: Unique name of the component
+          default: my-quarkus-app
+          ui:field: EntityNamePicker
+          maxLength: 23
+        group_id:
+          title: Group Id
+          type: string
+          default: redhat.janus
+          description: Maven Group Id
+        artifact_id:
+          title: Artifact Id
+          type: string
+          default: quarkus-app
+          description: Maven Artifact Id
+        java_package_name:
+          title: Java Package Name
+          default: org.redhat.janus
+          type: string
+          description: Name for the java package. eg (com.redhat.blah)
+        description:
+          title: Description
+          type: string
+          description: Help others understand what this website is for.
+          default: A cool quarkus app
+
+    - title: Git Repository Information
+      required:
+        - repo
+      properties:
+        repo:
+          title: Git Repo Location
+          type: object
+          properties:
+            host:
+              title: Repo Host
+              type: string
+              description: Your SCM host
+              default: github.com
+              enum:
+                - github.com
+            owner:
+              title: Repo Org
+              type: string
+              description: Your SCM host organization/group
+              default: GcBackstageDemos
+              enum:
+                - GcBackstageDemos
+
+    - title: K8s Information
+      required:
+        - namespace
+        - argo_instance
+        - cluster_app_domain
+      properties:
+        cluster_app_domain:
+          title: Your Cluster App Domain
+          type: string
+          description: something like 'apps.org-domain'
+        namespace:
+          title: Namespace
+          type: string
+          description: Namespace where it will be deployed
+          ui:field: EntityNamePicker
+          maxLength: 23
+        argo_instance:
+          title: ArgoCD Instance
+          type: string
+          default: default
+          description: ArgoCD Instance set on the Backstage Configuration
+  steps:
+    - id: template
+      name: Fetch Skeleton + Template
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          component_id: ${{ parameters.component_id }}
+          description: ${{ parameters.description }}
+          group_id: ${{ parameters.group_id }}
+          artifact_id: ${{ parameters.artifact_id }}
+          java_package_name: ${{ parameters.java_package_name }}
+          owner: ${{ user.entity.metadata.name }}
+          host:  ${{ parameters.repo.host }}
+          destination: ${{ parameters.repo.owner }}/${{ parameters.component_id }}
+          cluster_app_domain: ${{ parameters.cluster_app_domain }}
+          source_repo: "${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.component_id }}"
+
+    - id: publish
+      name: Publish
+      action: publish:github
+      input:
+        repoUrl: "${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.component_id}}"
+        repoVisibility: public
+        defaultBranch: main
+
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: "/catalog-info.yaml"
+
+    - id: template-gitops-deployment
+      name: Generating Deployment Resources
+      action: fetch:template
+      input:
+        url: ./manifests
+        copyWithoutTemplating: []
+        values:
+          component_id: ${{ parameters.component_id }}
+          description: ${{ parameters.description }}
+          destination: "https://'${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{parameters.component_id}}-gitops.git"
+          source_repository: "https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{parameters.component_id}}.git"
+          namespace: ${{ parameters.namespace }}
+          user: ${{ user.entity.metadata.name }}
+          artifact_id: ${{ parameters.artifact_id }}
+          gitops_repo: ${{ steps.publish.output.remoteUrl }}-gitops
+          source_repo: ${{ steps.publish.output.remoteUrl }}
+        targetPath: ./tenant-gitops
+
+    - id: publish-gitops
+      name: Publishing to Resource Repository
+      action: publish:github
+      input:
+        repoUrl: "${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.component_id}}-gitops"
+        title: gitops resources for '${{ parameters.component_id }}'
+        description: gitops resources for '${{ parameters.component_id }}' 
+        sourcePath: ./tenant-gitops
+        repoVisibility: public
+        defaultBranch: main
+
+    - id: create-argocd-resources
+      name: Create ArgoCD Resources
+      action: argocd:create-resources
+      input:
+        appName: ${{ parameters.component_id }}
+        argoInstance: ${{ parameters.argo_instance }}
+        namespace: ${{ parameters.namespace }}
+        repoUrl: "https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.component_id }}-gitops.git"
+        path: 'k8s/'
+
+  output:
+    links:
+      - title: Source Code Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Open Component in catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}
