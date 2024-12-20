@@ -65,8 +65,9 @@ spec:
               title: Repo Org
               type: string
               description: Your SCM host organization/group
-              default: GcBackstageDemos
+              default: luisevm-do400-org
               enum:
+                - luisevm-do400-org
                 - GcBackstageDemos
 
     - title: K8s Information
